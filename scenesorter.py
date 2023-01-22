@@ -44,36 +44,44 @@ class CompareImg:
         else:
             print("folder not defined please use flags -f <folder_name> or --folder <folder_name> when running python script")
 
+
+    def uniquify(self,path):
+        filename, extension = os.path.splitext(path)
+        counter = 1
+
+        while os.path.exists(path):
+            path = filename + " (" + str(counter) + ")" + extension
+            counter += 1
+
+        return path
+
     def main(self):
 
 
 
         img_seq_list = os.listdir(self.folder)
         img_seq_list.sort()
+        remove_buffer=[]
 
         l=0
         r=1
+        for i in range(len(img_seq_list)):
+                
+            if img_seq_list[i][0] =="." or "." not in img_seq_list[i]:
+                print(f"Skipping hidden file or folder: {img_seq_list[i]}")
 
-        if img_seq_list[l][0] ==".":
-            print(f"Skipping hidden file: {img_seq_list[l]}")
-            img_seq_list.pop(l)  
+                remove_buffer.append(img_seq_list[i])
 
+        for i in remove_buffer:
+                
+                img_seq_list.remove(i)
+                    
 
-        self.set_holder_folder= "image_sequences"  
+        self.set_holder_folder= os.path.basename(self.uniquify(f"{os.getcwd()}/{self.folder}/image_sequences"))
 
         self.diff_num=0
-        if os.path.exists(f"{os.getcwd()}/{self.folder}/image_sequences"):
-            folder_path=os.path.dirname(f"{os.getcwd()}/{self.folder}/image_sequences")
 
-            if folder_path[-1].isdigit():
-                os.mkdir(f"image_sequences({int(folder_path[-1])+1})")
-                self.set_holder_folder=f"image_sequences({int(folder_path[-1])+1})"
-            else:
-                os.mkdir(f"image_sequences(1)")
-                self.set_holder_folder="image_sequences(1)"
-
-        else:     
-            os.mkdir(f"image_sequences")
+        os.mkdir(( self.set_holder_folder))
 
         
 
@@ -84,41 +92,38 @@ class CompareImg:
 
         while r < len(img_seq_list):
 
-            if img_seq_list[r][0] ==".":
+            try:
+
+                print()
                 
-                print(f"Skipping hidden file: {img_seq_list[r]}")
-                img_seq_list.pop(r)
-                
-
-
-                
-
-            print()
-            
-            print(f"{img_seq_list[l]} >>>>> {img_seq_list[r]} ")
-            self.get_answer(img_seq_list[l],img_seq_list[r])
-            print()
-            
-
-            if self.difference <=self.pix_diff:
-                shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                print(f"{img_seq_list[l]} >>>>> {img_seq_list[r]} ")
+                self.get_answer(img_seq_list[l],img_seq_list[r])
+                print()
                 
 
-            else:
+                if self.difference <=self.pix_diff:
+                    shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                    
 
-                os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
-                self.diff_num+=1
-                os.mkdir((f"set{self.diff_num}"))
+                else:
 
-                self.changes(f"{os.getcwd()}/{self.set_holder_folder}/set{self.diff_num-1}/{img_seq_list[l]}",f"{os.getcwd()}/{self.folder}/{img_seq_list[r]}")
+                    os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
+                    self.diff_num+=1
+                    os.mkdir((f"set{self.diff_num}"))
 
-                os.rename(f"{os.getcwd()}/changes{self.diff_num}.png", f"set{self.diff_num}/changes{self.diff_num}.png")
+                    self.changes(f"{os.getcwd()}/{self.set_holder_folder}/set{self.diff_num-1}/{img_seq_list[l]}",f"{os.getcwd()}/{self.folder}/{img_seq_list[r]}")
 
-                shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                    os.rename(f"{os.getcwd()}/changes{self.diff_num}.png", f"set{self.diff_num}/changes{self.diff_num}.png")
+
+                    shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                    
+                    l=r
+
+                r+=1
+
+            except Exception as e:
+                print(e)
                 
-                l=r
-
-            r+=1
         os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
 
 
