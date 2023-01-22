@@ -24,6 +24,6 @@ put your folder that contains images in the same directory as  py script
 make sure images are numbered
 
 ```
- python3 scenesorter.py -f <name of folder containing images> -d <intesity of difference e.g 0.5>
+ python3 scenesorter.py -f <name of folder containing images> -d <intesity of difference e.g 0.5 default is 0.5>
 ```
  
