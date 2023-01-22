@@ -17,3 +17,13 @@ python -m pip install os
 python -m pip install cv2
 python -m pip install imutils 
 ``` 
+
+## How to run
+make sure you are in the directory that contains python script
+put your folder that contains images in the same directory as  py script
+make sure images are numbered
+
+```
+ python3 scenesorter.py -f <name of folder containing images> -d <intesity of difference e.g 0.5>
+```
+ 
