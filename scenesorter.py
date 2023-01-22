@@ -1,5 +1,6 @@
 import sys
 import getopt
+import shutil
 
 from imageio.v2 import imread
 from scipy.linalg import norm
@@ -38,7 +39,7 @@ class CompareImg:
 
 
             self.main()
-            os.rename(f"image_sequences/", f"{self.folder}/image_sequences/")
+            os.rename(f"{self.set_holder_folder}/", f"{self.folder}/{self.set_holder_folder}/")
 
         else:
             print("folder not defined please use flags -f <folder_name> or --folder <folder_name> when running python script")
@@ -55,12 +56,29 @@ class CompareImg:
 
         if img_seq_list[l][0] ==".":
             print(f"Skipping hidden file: {img_seq_list[l]}")
-            img_seq_list.pop(l)        
-            
+            img_seq_list.pop(l)  
+
+
+        self.set_holder_folder= "image_sequences"  
+
         self.diff_num=0
-        os.mkdir(f"image_sequences")
+        if os.path.exists(f"{os.getcwd()}/{self.folder}/image_sequences"):
+            folder_path=os.path.dirname(f"{os.getcwd()}/{self.folder}/image_sequences")
+
+            if folder_path[-1].isdigit():
+                os.mkdir(f"image_sequences({int(folder_path[-1])+1})")
+                self.set_holder_folder=f"image_sequences({int(folder_path[-1])+1})"
+            else:
+                os.mkdir(f"image_sequences(1)")
+                self.set_holder_folder="image_sequences(1)"
+
+        else:     
+            os.mkdir(f"image_sequences")
+
+        
+
         os.mkdir(f"set{self.diff_num}")
-        os.rename(f"{self.folder}/{img_seq_list[l]}", f"set{self.diff_num}/{img_seq_list[l]}")
+        shutil.copy(f"{self.folder}/{img_seq_list[l]}", f"set{self.diff_num}/{img_seq_list[l]}")
 
         
 
@@ -83,25 +101,25 @@ class CompareImg:
             
 
             if self.difference <=self.pix_diff:
-                os.rename(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
                 
 
             else:
 
-                os.rename(f"set{self.diff_num}/", f"image_sequences/set{self.diff_num}/")
+                os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
                 self.diff_num+=1
                 os.mkdir((f"set{self.diff_num}"))
 
-                self.changes(f"{os.getcwd()}/image_sequences/set{self.diff_num-1}/{img_seq_list[l]}",f"{os.getcwd()}/{self.folder}/{img_seq_list[r]}")
+                self.changes(f"{os.getcwd()}/{self.set_holder_folder}/set{self.diff_num-1}/{img_seq_list[l]}",f"{os.getcwd()}/{self.folder}/{img_seq_list[r]}")
 
                 os.rename(f"{os.getcwd()}/changes{self.diff_num}.png", f"set{self.diff_num}/changes{self.diff_num}.png")
 
-                os.rename(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
+                shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
                 
                 l=r
 
             r+=1
-        os.rename(f"set{self.diff_num}/", f"image_sequences/set{self.diff_num}/")
+        os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
 
 
     def get_answer(self,file1,file2):
