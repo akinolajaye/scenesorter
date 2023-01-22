@@ -59,6 +59,16 @@ class CompareImg:
 
         while r < len(img_seq_list):
 
+            if img_seq_list[r][0] ==".":
+                print(f"Skipping hidden file: {img_seq_list[r]}")
+                img_seq_list.pop(r)
+                
+
+            if img_seq_list[l][0] ==".":
+                print(f"Skipping hidden file: {img_seq_list[l]}")
+                img_seq_list.pop(l)
+                
+
             print()
             
             print(f"{img_seq_list[l]} >>>>> {img_seq_list[r]} ")
