@@ -46,27 +46,33 @@ class CompareImg:
     def main(self):
 
 
+
         img_seq_list = os.listdir(self.folder)
         img_seq_list.sort()
 
         l=0
         r=1
+
+        if img_seq_list[l][0] ==".":
+            print(f"Skipping hidden file: {img_seq_list[l]}")
+            img_seq_list.pop(l)        
+            
         self.diff_num=0
         os.mkdir(f"image_sequences")
         os.mkdir(f"set{self.diff_num}")
         os.rename(f"{self.folder}/{img_seq_list[l]}", f"set{self.diff_num}/{img_seq_list[l]}")
 
+        
 
         while r < len(img_seq_list):
 
             if img_seq_list[r][0] ==".":
+                
                 print(f"Skipping hidden file: {img_seq_list[r]}")
                 img_seq_list.pop(r)
                 
 
-            if img_seq_list[l][0] ==".":
-                print(f"Skipping hidden file: {img_seq_list[l]}")
-                img_seq_list.pop(l)
+
                 
 
             print()

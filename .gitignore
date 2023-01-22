@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 hello/.DS_Store
 .DS_Store
-hello/*
+*.png
