@@ -83,12 +83,9 @@ class CompareImg:
 
         os.mkdir(( self.set_holder_folder))
 
-        
-
+  
         os.mkdir(f"set{self.diff_num}")
-        shutil.copy(f"{self.folder}/{img_seq_list[l]}", f"set{self.diff_num}/{img_seq_list[l]}")
-
-        
+        shutil.copy(f"{self.folder}/{img_seq_list[l]}", f"set{self.diff_num}/{img_seq_list[l]}")   
 
         while r < len(img_seq_list):
 
@@ -99,8 +96,7 @@ class CompareImg:
                 print(f"{img_seq_list[l]} >>>>> {img_seq_list[r]} ")
                 self.get_answer(img_seq_list[l],img_seq_list[r])
                 print()
-                
-
+             
                 if self.difference <=self.pix_diff:
                     shutil.copy(f"{self.folder}/{img_seq_list[r]}", f"set{self.diff_num}/{img_seq_list[r]}")
                     
@@ -125,7 +121,6 @@ class CompareImg:
                 print(e)
                 
         os.rename(f"set{self.diff_num}/", f"{self.set_holder_folder}/set{self.diff_num}/")
-
 
     def get_answer(self,file1,file2):
         
@@ -193,12 +188,7 @@ class CompareImg:
             dilated = cv2.dilate(gray.copy(), None, iterations= i+ 1)
         
 
-        
-        #threshold the gray image to binary it. Anything pixel that has
-        #value higher than 3 we are converting to white
-        #(remember 0 is black and 255 is exact white)
-        #the image is called binarised as any value lower than 3 will be 0 and
-        # all of the values equal to and higher than 3 will be 255
+       
         (T, thresh) = cv2.threshold(dilated, 3, 255, cv2.THRESH_BINARY)
 
         # now we have to find contours in the binarized image
@@ -211,9 +201,6 @@ class CompareImg:
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(new, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        #remove comments from below 2 lines if you want to
-        #for viewing the image press any key to continue
-        #simply write the identified changes to the diskss
         cv2.imwrite(f"changes{self.diff_num}.png", new)
                 
 
